@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/takuh/StudioProjects/1DayProject3/app/src/main/res/drawable-v24/ic_baseline_add_circle_24.xml" value="0.1945" />
+        <entry key="..\:/Users/takuh/StudioProjects/1DayProject3/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1945" />
+        <entry key="..\:/Users/takuh/StudioProjects/1DayProject3/app/src/main/res/layout/activity_main.xml" value="0.18645833333333334" />
+        <entry key="..\:/Users/takuh/StudioProjects/1DayProject3/app/src/main/res/menu/activity_main.xml" value="0.44611528822055135" />
+        <entry key="..\:/Users/takuh/StudioProjects/1DayProject3/app/src/main/res/menu/option_menu.xml" value="0.18541666666666667" />
+      </map>
+    </option>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
