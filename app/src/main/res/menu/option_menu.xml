@@ -7,5 +7,6 @@
         android:orderInCategory="1"
         android:title="編集モード"
         app:showAsAction="ifRoom"
+        android:tint="#ffffff"
         />
 </menu>
