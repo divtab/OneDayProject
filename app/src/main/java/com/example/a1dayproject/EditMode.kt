@@ -2,6 +2,9 @@ package com.example.a1dayproject
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle import android.view.MenuItem
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import androidx.appcompat.app.ActionBar
 
 class EditMode : AppCompatActivity() {
@@ -15,7 +18,21 @@ class EditMode : AppCompatActivity() {
         supportActionBar?.title = "EditMode..."
     }
 
+    fun onSaveBtn(view: View){
+        val saveBtn:Button = findViewById(R.id.saveBtn)
+        var etProject:EditText = findViewById(R.id.etProject)
 
+        //保存ボタン押下時
+        saveBtn.setOnClickListener{
+//            val etProject:EditText = findViewById(R.id.etProject)
+            //プロジェクト欄の内容を取得。
+            val note : String = etProject.text.toString()
+
+
+        }
+        etProject.setText("")
+
+    }
 
 
     //optionBar 押下処理
