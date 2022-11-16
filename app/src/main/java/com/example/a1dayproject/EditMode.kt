@@ -5,9 +5,18 @@ import android.os.Bundle import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import androidx.appcompat.app.ActionBar
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 
 class EditMode : AppCompatActivity() {
+    lateinit var recyclerViewAdapter: RecyclerAdapter
+    lateinit var viewModel: MainActivityViewModel
+    var recyclerView = findViewById<RecyclerView>(R.id.recyclerViewAdapter)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_mode)
@@ -16,20 +25,55 @@ class EditMode : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         //optionBar タイトル
         supportActionBar?.title = "EditMode..."
+
+        recyclerView.apply {
+            layoutManager = LinearLayoutManager(this@EditMode)
+            recyclerViewAdapter = RecyclerAdapter(this@EditMode)
+            adapter = recyclerViewAdapter
+            val divider = DividerItemDecoration(applicationContext, StaggeredGridLayoutManager.VERTICAL)
+            addItemDecoration(divider)
+        }
+
+
+        viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
+        viewModel.getAllUsersObservers().observe(this, Observer {
+            recyclerViewAdapter.setListData(ArrayList(it))
+            recyclerViewAdapter.notifyDataSetChanged()
+        })
+
+
+        val saveButton = findViewById<Button>(R.id.saveBtn)
+        saveButton.setOnClickListener {
+            val name  = nameInput.text.toString()
+            val email  = emailInput.text.toString()
+            val phone = phoneInput.text.toString()
+            if(saveButton.text.equals("Save")) {
+                val user = UserEntity(0, name, email, phone)
+                viewModel.insertUserInfo(user)
+            } else {
+                val user = UserEntity(nameInput.getTag(nameInput.id).toString().toInt(), name, email, phone)
+                viewModel.updateUserInfo(user)
+                saveButton.setText("Save")
+            }
+            nameInput.setText("")
+            emailInput.setText("")
+        }
+
+
     }
 
     //保存ボタン押下時
-    fun onSaveBtn(view: View){
-        val saveBtn:Button = findViewById(R.id.saveBtn)
-        var etProject:EditText = findViewById(R.id.etProject)
-
-        //プロジェクト欄の内容を取得。
-        val note : String = etProject.text.toString()
-
-        //プロジェクト欄を白紙に戻す。
-        etProject.setText("")
-
-    }
+//    fun onSaveBtn(view: View){
+//        val saveBtn:Button = findViewById(R.id.saveBtn)
+//        var etProject:EditText = findViewById(R.id.etProject)
+//
+//        //プロジェクト欄の内容を取得。
+//        val note : String = etProject.text.toString()
+//
+//        //プロジェクト欄を白紙に戻す。
+//        etProject.setText("")
+//
+//    }
 
 
     //optionBar 押下処理
