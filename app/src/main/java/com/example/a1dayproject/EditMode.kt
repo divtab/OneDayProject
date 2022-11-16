@@ -18,18 +18,15 @@ class EditMode : AppCompatActivity() {
         supportActionBar?.title = "EditMode..."
     }
 
+    //保存ボタン押下時
     fun onSaveBtn(view: View){
         val saveBtn:Button = findViewById(R.id.saveBtn)
         var etProject:EditText = findViewById(R.id.etProject)
 
-        //保存ボタン押下時
-        saveBtn.setOnClickListener{
-//            val etProject:EditText = findViewById(R.id.etProject)
-            //プロジェクト欄の内容を取得。
-            val note : String = etProject.text.toString()
+        //プロジェクト欄の内容を取得。
+        val note : String = etProject.text.toString()
 
-
-        }
+        //プロジェクト欄を白紙に戻す。
         etProject.setText("")
 
     }
