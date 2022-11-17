@@ -1,10 +1,8 @@
 package com.example.a1dayproject.db
 
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 
+@Dao
 interface UserDao {
     @Query("SELECT * FROM userinfo ORDER BY id DESC")
     fun getAllUserInfo(): List<UserEntity>?

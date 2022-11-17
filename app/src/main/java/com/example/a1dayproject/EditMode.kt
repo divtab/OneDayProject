@@ -10,14 +10,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
+import com.example.a1dayproject.db.UserEntity
 
 class EditMode : AppCompatActivity() {
     lateinit var recyclerViewAdapter: RecyclerAdapter
     lateinit var viewModel: MainActivityViewModel
-    var recyclerView = findViewById<RecyclerView>(R.id.recyclerViewAdapter)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        var recyclerView = findViewById<RecyclerView>(R.id.recyclerViewAdapter)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_mode)
 
@@ -30,7 +32,7 @@ class EditMode : AppCompatActivity() {
             layoutManager = LinearLayoutManager(this@EditMode)
             recyclerViewAdapter = RecyclerAdapter(this@EditMode)
             adapter = recyclerViewAdapter
-            val divider = DividerItemDecoration(applicationContext, StaggeredGridLayoutManager.VERTICAL)
+            val divider = DividerItemDecoration(applicationContext, VERTICAL)
             addItemDecoration(divider)
         }
 
@@ -44,19 +46,17 @@ class EditMode : AppCompatActivity() {
 
         val saveButton = findViewById<Button>(R.id.saveBtn)
         saveButton.setOnClickListener {
-            val name  = nameInput.text.toString()
-            val email  = emailInput.text.toString()
-            val phone = phoneInput.text.toString()
+            val project  = findViewById<EditText>(R.id.etProject)
             if(saveButton.text.equals("Save")) {
-                val user = UserEntity(0, name, email, phone)
+                val user = UserEntity(0, project.text.toString())
                 viewModel.insertUserInfo(user)
             } else {
-                val user = UserEntity(nameInput.getTag(nameInput.id).toString().toInt(), name, email, phone)
+                val user = UserEntity(project.getTag(project.id).toString().toInt(), project.text.toString())
                 viewModel.updateUserInfo(user)
                 saveButton.setText("Save")
             }
-            nameInput.setText("")
-            emailInput.setText("")
+            project.setText("")
+
         }
 
 
@@ -74,7 +74,17 @@ class EditMode : AppCompatActivity() {
 //        etProject.setText("")
 //
 //    }
+    fun onDeleteUserClickListener(user: UserEntity) {
+        viewModel.deleteUserInfo(user)
+    }
 
+    fun onItemClickListener(user: UserEntity) {
+        val project  = findViewById<EditText>(R.id.etProject)
+        val saveButton = findViewById<Button>(R.id.saveBtn)
+        project.setText(user.name)
+        project.setTag(project.id, user.id)
+        saveButton.setText("Update")
+    }
 
     //optionBar 押下処理
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

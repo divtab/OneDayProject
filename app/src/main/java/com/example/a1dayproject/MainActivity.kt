@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         //item.itemIdは、選択されたオプションメニューのid
         when(item.itemId){
             R.id.action_editMode -> {
-                intent = Intent(this@MainActivity, EditMode::class.java)
+                intent = Intent(this, EditMode::class.java)
                 startActivity(intent)
             }
             else ->

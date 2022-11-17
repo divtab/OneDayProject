@@ -22,7 +22,7 @@ class RecyclerAdapter(val listener: EditMode): RecyclerView.Adapter<RecyclerAdap
     //1行だけのレイアウト
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderItem {
         val itemXml = LayoutInflater.from(parent.context).inflate(R.layout.one_layout,parent,false)
-        return ViewHolderItem(itemXml, listener)
+        return ViewHolderItem(itemXml, listener )
     }
 
     //position番目のデータをレイアウトに表示させるようにセット
@@ -39,7 +39,7 @@ class RecyclerAdapter(val listener: EditMode): RecyclerView.Adapter<RecyclerAdap
 
 
     //ViewHolder
-    class ViewHolderItem(view: View, val listener: RowClickListener): RecyclerView.ViewHolder(view) {
+    class ViewHolderItem(view: View, val listener: EditMode): RecyclerView.ViewHolder(view) {
 
         val tvName = view.findViewById<TextView>(R.id.tvName)
         val deleteUserID = view.findViewById<ImageView>(R.id.deleteUserID)
