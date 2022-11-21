@@ -1,8 +1,8 @@
 package com.example.a1dayproject
 
+import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle import android.view.MenuItem
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import androidx.lifecycle.Observer
@@ -34,40 +34,30 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
             addItemDecoration(divider)
         }
 
-        viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
+        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
         viewModel.getAllUsersObservers().observe(this, Observer {
             recyclerViewAdapter.setListData(ArrayList(it))
             recyclerViewAdapter.notifyDataSetChanged()
         })
 
-
+        //保存ボタン押下時
         val saveButton = findViewById<Button>(R.id.saveBtn)
         saveButton.setOnClickListener {
+
             val project  = findViewById<EditText>(R.id.etProject)
-            if(saveButton.text.equals("Save")) {
+            if(saveButton.text.equals("保存")) {
                 val user = UserEntity(0, project.text.toString())
                 viewModel.insertUserInfo(user)
-            } else {
+            }else {
                 val user = UserEntity(project.getTag(project.id).toString().toInt(), project.text.toString())
                 viewModel.updateUserInfo(user)
-                saveButton.setText("Save")
+                saveButton.setText("保存")
             }
             project.setText("")
         }
     }
 
-    //保存ボタン押下時
-//    fun onSaveBtn(view: View){
-//        val saveBtn:Button = findViewById(R.id.saveBtn)
-//        var etProject:EditText = findViewById(R.id.etProject)
-//
-//        //プロジェクト欄の内容を取得。
-//        val note : String = etProject.text.toString()
-//
-//        //プロジェクト欄を白紙に戻す。
-//        etProject.setText("")
-//
-//    }
+
     override fun onDeleteUserClickListener(user: UserEntity) {
         viewModel.deleteUserInfo(user)
     }
@@ -77,7 +67,7 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
         val saveButton = findViewById<Button>(R.id.saveBtn)
         project.setText(user.name)
         project.setTag(project.id, user.id)
-        saveButton.setText("Update")
+        saveButton.setText("変更")
     }
 
     //optionBar 押下処理

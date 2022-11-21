@@ -5,11 +5,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import com.example.a1dayproject.db.UserEntity
 
 
-
-class MainActivity : AppCompatActivity() {
-
+class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListener {
+    lateinit var mainRVA:MainRecyclerViewAdapter
+    lateinit var viewModel:MainActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +41,8 @@ class MainActivity : AppCompatActivity() {
         }
         return  returnVal
     }
+
+
 
 
 }
