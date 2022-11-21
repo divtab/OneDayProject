@@ -8,38 +8,31 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.a1dayproject.db.UserEntity
 
-
-class RecyclerAdapter(val listener: EditMode): RecyclerView.Adapter<RecyclerAdapter.ViewHolderItem>() {
-
+class RecyclerViewAdapter (val listener: EditMode): RecyclerView.Adapter<RecyclerViewAdapter.ViewHolderItem>() {
     var items = ArrayList<UserEntity>()
 
     fun setListData(data: ArrayList<UserEntity>) {
         this.items = data
     }
 
-
-
-    //1行だけのレイアウト
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderItem {
+    override fun onCreateViewHolder(parent: ViewGroup,viewType: Int): RecyclerViewAdapter.ViewHolderItem {
         val itemXml = LayoutInflater.from(parent.context).inflate(R.layout.one_layout,parent,false)
-        return ViewHolderItem(itemXml, listener )
+        return ViewHolderItem(itemXml, listener)
     }
 
-    //position番目のデータをレイアウトに表示させるようにセット
-    override fun onBindViewHolder(holder: ViewHolderItem, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerViewAdapter.ViewHolderItem, position: Int) {
         holder.itemView.setOnClickListener {
             listener.onItemClickListener(items[position])
         }
         holder.bind(items[position])
     }
-    //リストサイズ
+
     override fun getItemCount(): Int {
         return items.size
     }
 
-
     //ViewHolder
-    class ViewHolderItem(view: View, val listener: EditMode): RecyclerView.ViewHolder(view) {
+    inner class ViewHolderItem(view: View, val listener: EditMode): RecyclerView.ViewHolder(view) {
 
         val tvName = view.findViewById<TextView>(R.id.tvName)
         val deleteUserID = view.findViewById<ImageView>(R.id.deleteUserID)
@@ -56,5 +49,4 @@ class RecyclerAdapter(val listener: EditMode): RecyclerView.Adapter<RecyclerAdap
         fun onDeleteUserClickListener(user: UserEntity)
         fun onItemClickListener(user: UserEntity)
     }
-
 }
