@@ -13,13 +13,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
 import com.example.a1dayproject.db.UserEntity
 
-class EditMode : AppCompatActivity() {
-    lateinit var recyclerViewAdapter: RecyclerAdapter
+class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
+    lateinit var recyclerViewAdapter: RecyclerViewAdapter
     lateinit var viewModel: MainActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        var recyclerView = findViewById<RecyclerView>(R.id.recyclerViewAdapter)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_mode)
 
@@ -27,15 +25,14 @@ class EditMode : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         //optionBar タイトル
         supportActionBar?.title = "EditMode..."
-
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewAdapter)
         recyclerView.apply {
             layoutManager = LinearLayoutManager(this@EditMode)
-            recyclerViewAdapter = RecyclerAdapter(this@EditMode)
+            recyclerViewAdapter = RecyclerViewAdapter(this@EditMode)
             adapter = recyclerViewAdapter
             val divider = DividerItemDecoration(applicationContext, VERTICAL)
             addItemDecoration(divider)
         }
-
 
         viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
         viewModel.getAllUsersObservers().observe(this, Observer {
@@ -56,10 +53,7 @@ class EditMode : AppCompatActivity() {
                 saveButton.setText("Save")
             }
             project.setText("")
-
         }
-
-
     }
 
     //保存ボタン押下時
@@ -74,11 +68,11 @@ class EditMode : AppCompatActivity() {
 //        etProject.setText("")
 //
 //    }
-    fun onDeleteUserClickListener(user: UserEntity) {
+    override fun onDeleteUserClickListener(user: UserEntity) {
         viewModel.deleteUserInfo(user)
     }
 
-    fun onItemClickListener(user: UserEntity) {
+    override fun onItemClickListener(user: UserEntity) {
         val project  = findViewById<EditText>(R.id.etProject)
         val saveButton = findViewById<Button>(R.id.saveBtn)
         project.setText(user.name)
