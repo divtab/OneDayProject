@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
         setContentView(R.layout.activity_main)
 
     }
-
+    //ここから再開する
 
 
     //メニューを初めて表示するときに一度だけ呼び出される。
