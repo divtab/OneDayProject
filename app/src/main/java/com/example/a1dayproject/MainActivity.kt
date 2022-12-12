@@ -5,6 +5,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
 import com.example.a1dayproject.db.UserEntity
 
 
@@ -16,8 +22,21 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val recyclerView = findViewById<RecyclerView>(R.id.MainRV)
+        recyclerView.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = mainRVA
+            val divider = DividerItemDecoration(applicationContext,VERTICAL)
+            addItemDecoration(divider)
+        }
+        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+        viewModel.getAllUsersObservers().observe(this, Observer {
+            mainRVA.setListData(ArrayList(it))
+            mainRVA.notifyDataSetChanged()
+        })
+
     }
-    //ここから再開する
+
 
 
     //メニューを初めて表示するときに一度だけ呼び出される。
@@ -42,7 +61,13 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
         return  returnVal
     }
 
+    override fun onDeleteUserClickListener(user: UserEntity) {
+        viewModel.deleteUserInfo(user)
+    }
 
+    override fun onItemClickListener(user: UserEntity) {
+
+    }
 
 
 }

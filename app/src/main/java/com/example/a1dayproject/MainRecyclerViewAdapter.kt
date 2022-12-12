@@ -16,7 +16,7 @@ class MainRecyclerViewAdapter (val listener:MainActivity): RecyclerView.Adapter<
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainRecyclerViewAdapter.MainViewHolderItem {
-        val itemXml = LayoutInflater.from(parent.context).inflate(R.layout.,parent,false)
+        val itemXml = LayoutInflater.from(parent.context).inflate(R.layout.main_one_layout,parent,false)
         return MainViewHolderItem(itemXml, listener)
     }
     override fun onBindViewHolder(holder: MainViewHolderItem, position: Int) {
