@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
         val recyclerView = findViewById<RecyclerView>(R.id.MainRV)
         recyclerView.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
+            mainRVA = MainRecyclerViewAdapter(this@MainActivity)
             adapter = mainRVA
             val divider = DividerItemDecoration(applicationContext,VERTICAL)
             addItemDecoration(divider)
