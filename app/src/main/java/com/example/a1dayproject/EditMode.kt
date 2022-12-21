@@ -1,5 +1,6 @@
 package com.example.a1dayproject
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -73,9 +74,11 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
     //optionBar 押下処理
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         var returnVal = true
+        val intent = Intent(this, MainActivity::class.java)
         //android.R.id.home : Android SDKで用意されたR値を使用する。
         if(item.itemId == android.R.id.home){
             finish()
+            startActivity(intent)
         }
         else{
             returnVal = super.onOptionsItemSelected(item)
