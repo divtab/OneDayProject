@@ -3,6 +3,7 @@ package com.example.a1dayproject
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -33,13 +34,25 @@ class MainRecyclerViewAdapter (val listener:MainActivity): RecyclerView.Adapter<
     //ViewHolder
     inner class MainViewHolderItem(view: View, val listener: MainActivity): RecyclerView.ViewHolder(view) {
 
-        val checkBox = view.findViewById<TextView>(R.id.checkBox)
+        val checkBox = view.findViewById<CheckBox>(R.id.checkBox)
+        val mainTv = view.findViewById<TextView>(R.id.miantv)
 
         fun bind(data: UserEntity) {
-            checkBox.text = data.name
+            mainTv.text = data.name
+            checkBox.isChecked = data.check
+
 //            deleteUserID.setOnClickListener {
 //                listener.onDeleteUserClickListener(data)
 //            }
+            checkBox.setOnClickListener {
+                if (checkBox.isChecked == true){
+                    data.check = true
+                }else{
+                    data.check = false
+                }
+
+            }
+
         }
     }
 

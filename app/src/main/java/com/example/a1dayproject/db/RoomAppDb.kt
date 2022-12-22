@@ -1,6 +1,7 @@
 package com.example.a1dayproject.db
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.Room
@@ -8,7 +9,9 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 
-@Database(entities = [UserEntity::class], version = 1, exportSchema = false)
+@Database(entities = [UserEntity::class], version = 1, exportSchema = false
+
+)
 abstract class RoomAppDb:RoomDatabase() {
 
     abstract fun userDao(): UserDao?

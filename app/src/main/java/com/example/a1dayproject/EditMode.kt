@@ -47,10 +47,10 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
 
             val project  = findViewById<EditText>(R.id.etProject)
             if(saveButton.text.equals("保存")) {
-                val user = UserEntity(0, project.text.toString())
+                val user = UserEntity(0, project.text.toString(),false)
                 viewModel.insertUserInfo(user)
             }else {
-                val user = UserEntity(project.getTag(project.id).toString().toInt(), project.text.toString())
+                val user = UserEntity(project.getTag(project.id).toString().toInt(), project.text.toString(),false)
                 viewModel.updateUserInfo(user)
                 saveButton.setText("保存")
             }

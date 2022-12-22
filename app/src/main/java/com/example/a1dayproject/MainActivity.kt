@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
             val divider = DividerItemDecoration(applicationContext,VERTICAL)
             addItemDecoration(divider)
         }
-        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+        viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
         viewModel.getAllUsersObservers().observe(this, Observer {
             mainRVA.setListData(ArrayList(it))
             mainRVA.notifyDataSetChanged()

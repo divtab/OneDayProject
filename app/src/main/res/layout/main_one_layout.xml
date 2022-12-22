@@ -17,6 +17,7 @@
         android:scaleX="1.5"
         android:scaleY="1.5"
         android:text=""
+        android:checked="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/miantv"
         app:layout_constraintHorizontal_weight="1"
