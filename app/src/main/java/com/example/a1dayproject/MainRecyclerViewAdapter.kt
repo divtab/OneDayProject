@@ -44,11 +44,17 @@ class MainRecyclerViewAdapter (val listener:MainActivity): RecyclerView.Adapter<
 //            deleteUserID.setOnClickListener {
 //                listener.onDeleteUserClickListener(data)
 //            }
+
+
             checkBox.setOnClickListener {
-                if (checkBox.isChecked == true){
-                    data.check = true
-                }else{
-                    data.check = false
+                //チェックボックスを押下した結果trueの時
+                if (checkBox.isChecked){
+                    listener.onCheckBoxClickTrue(data)
+                }
+                //チェックボックスを押下した結果falseの時
+                else{
+                    listener.onCheckBoxClickfalse(data)
+
                 }
 
             }
@@ -57,7 +63,8 @@ class MainRecyclerViewAdapter (val listener:MainActivity): RecyclerView.Adapter<
     }
 
     interface RowClickListener{
-        fun onDeleteUserClickListener(user: UserEntity)
+        fun onCheckBoxClickTrue(user: UserEntity)
+        fun onCheckBoxClickfalse(user: UserEntity)
         fun onItemClickListener(user: UserEntity)
     }
 

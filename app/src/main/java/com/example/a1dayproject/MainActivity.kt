@@ -62,8 +62,14 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
         return  returnVal
     }
 
-    override fun onDeleteUserClickListener(user: UserEntity) {
-        viewModel.deleteUserInfo(user)
+    override fun onCheckBoxClickTrue(user:UserEntity){
+        user.check = true
+        viewModel.updateUserInfo(user)
+    }
+
+    override fun onCheckBoxClickfalse(user:UserEntity){
+        user.check = false
+        viewModel.updateUserInfo(user)
     }
 
     override fun onItemClickListener(user: UserEntity) {
