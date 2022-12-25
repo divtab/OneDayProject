@@ -66,6 +66,9 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
     override fun onItemClickListener(user: UserEntity) {
         val project  = findViewById<EditText>(R.id.etProject)
         val saveButton = findViewById<Button>(R.id.saveBtn)
+
+        //
+
         project.setText(user.name)
         project.setTag(project.id, user.id)
         saveButton.setText("変更")

@@ -1,5 +1,7 @@
 package com.example.a1dayproject
 
+import android.graphics.Color
+import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,11 +43,10 @@ class MainRecyclerViewAdapter (val listener:MainActivity): RecyclerView.Adapter<
             mainTv.text = data.name
             checkBox.isChecked = data.check
 
-//            deleteUserID.setOnClickListener {
-//                listener.onDeleteUserClickListener(data)
-//            }
+            //チェックボックス押下により取り消し線を引く
+            invoke(mainTv,checkBox.isChecked)
 
-
+            //チェックボックス押下時に状態をRoomに登録
             checkBox.setOnClickListener {
                 //チェックボックスを押下した結果trueの時
                 if (checkBox.isChecked){
@@ -59,6 +60,7 @@ class MainRecyclerViewAdapter (val listener:MainActivity): RecyclerView.Adapter<
 
             }
 
+
         }
     }
 
@@ -66,6 +68,24 @@ class MainRecyclerViewAdapter (val listener:MainActivity): RecyclerView.Adapter<
         fun onCheckBoxClickTrue(user: UserEntity)
         fun onCheckBoxClickfalse(user: UserEntity)
         fun onItemClickListener(user: UserEntity)
+    }
+
+
+    //TextViewに取り消し線を付ける
+    fun invoke(textView: TextView, checked: Boolean) {
+        if (checked) {
+            textView.apply {
+                setTextColor(Color.LTGRAY)
+                paint.flags = this.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                paint.isAntiAlias = true
+            }
+        } else {
+            textView.apply {
+                setTextColor(Color.BLACK)
+                paint.flags = Paint.ANTI_ALIAS_FLAG
+                paint.isAntiAlias = false
+            }
+        }
     }
 
 

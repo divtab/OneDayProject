@@ -1,10 +1,13 @@
 package com.example.a1dayproject
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.Paint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -61,6 +64,24 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
         }
         return  returnVal
     }
+
+    fun invoke(textView: TextView, checked: Boolean) {
+        if (checked) {
+            textView.apply {
+                setTextColor(Color.LTGRAY)
+                paint.flags = this.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                paint.isAntiAlias = true
+            }
+        } else {
+            textView.apply {
+                setTextColor(Color.BLACK)
+                paint.flags = Paint.ANTI_ALIAS_FLAG
+                paint.isAntiAlias = false
+            }
+        }
+    }
+
+
 
     override fun onCheckBoxClickTrue(user:UserEntity){
         user.check = true
