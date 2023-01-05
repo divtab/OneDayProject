@@ -3,14 +3,29 @@ package com.example.a1dayproject
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.a1dayproject.db.UserEntity
 
-class RecyclerViewAdapter (val listener: EditMode): RecyclerView.Adapter<RecyclerViewAdapter.ViewHolderItem>() {
+class RecyclerViewAdapter(private val listener: EditMode): RecyclerView.Adapter<RecyclerViewAdapter.ViewHolderItem>() {
     var items = ArrayList<UserEntity>()
+
+    //ViewHolder
+    inner class ViewHolderItem(view: View, val listener: EditMode): RecyclerView.ViewHolder(view) {
+
+        val tvName = view.findViewById<TextView>(R.id.tvName)
+        val deleteUserID = view.findViewById<ImageView>(R.id.deleteUserID)
+
+        fun bind(data: UserEntity) {
+            tvName.text = data.name
+            deleteUserID.setOnClickListener {
+                listener.onDeleteUserClickListener(data)
+            }
+        }
+    }
+
 
     fun setListData(data: ArrayList<UserEntity>) {
         this.items = data
@@ -26,25 +41,14 @@ class RecyclerViewAdapter (val listener: EditMode): RecyclerView.Adapter<Recycle
             listener.onItemClickListener(items[position])
         }
         holder.bind(items[position])
+
     }
 
     override fun getItemCount(): Int {
         return items.size
     }
 
-    //ViewHolder
-    inner class ViewHolderItem(view: View, val listener: EditMode): RecyclerView.ViewHolder(view) {
 
-        val tvName = view.findViewById<TextView>(R.id.tvName)
-        val deleteUserID = view.findViewById<ImageView>(R.id.deleteUserID)
-
-        fun bind(data: UserEntity) {
-            tvName.text = data.name
-            deleteUserID.setOnClickListener {
-                listener.onDeleteUserClickListener(data)
-            }
-        }
-    }
 
     interface RowClickListener{
         fun onDeleteUserClickListener(user: UserEntity)

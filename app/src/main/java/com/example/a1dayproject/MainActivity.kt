@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
         }
         return  returnVal
     }
-
+    //
     fun invoke(textView: TextView, checked: Boolean) {
         if (checked) {
             textView.apply {

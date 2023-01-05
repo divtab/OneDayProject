@@ -1,6 +1,5 @@
 package com.example.a1dayproject
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -10,16 +9,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.core.widget.addTextChangedListener
-import androidx.core.widget.doAfterTextChanged
-import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
 import com.example.a1dayproject.db.UserEntity
+import java.util.*
+import kotlin.collections.ArrayList
 
 class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
     lateinit var recyclerViewAdapter: RecyclerViewAdapter
@@ -35,19 +34,67 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
         //optionBar タイトル
         supportActionBar?.title = "EditMode..."
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewAdapter)
+        val dataSet: ArrayList<String> = arrayListOf()
+        var i = 0
+        while (i < 20) {
+            val str: String = java.lang.String.format(Locale.US, "Data_0%d", i)
+            dataSet.add(str)
+            i++
+        }
+
         recyclerView.apply {
             layoutManager = LinearLayoutManager(this@EditMode)
             recyclerViewAdapter = RecyclerViewAdapter(this@EditMode)
             adapter = recyclerViewAdapter
+            //アイテムの区切り線
             val divider = DividerItemDecoration(applicationContext, VERTICAL)
             addItemDecoration(divider)
+            //
+            setHasFixedSize(true)
         }
+
+        val itemDecoration: RecyclerView.ItemDecoration =
+            DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+        recyclerView.addItemDecoration(itemDecoration)
+
+
+        var adapter = recyclerView.adapter as RecyclerViewAdapter
+
+        val mIth = ItemTouchHelper(
+            object : ItemTouchHelper.SimpleCallback(
+                ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+                ItemTouchHelper.LEFT
+            ) {
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
+                ): Boolean {
+                    val fromPos = viewHolder.adapterPosition
+                    val toPos = target.adapterPosition
+                    adapter.notifyItemMoved(fromPos, toPos)
+                    return true // true if moved, false otherwise
+                }
+
+
+
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder,direction: Int) {
+//                    dataSet.removeAt(viewHolder.adapterPosition)
+//                    adapter.notifyItemRemoved(viewHolder.adapterPosition)
+
+                }
+            })
+
+        mIth.attachToRecyclerView(recyclerView)
+
+
 
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
         viewModel.getAllUsersObservers().observe(this, Observer {
             recyclerViewAdapter.setListData(ArrayList(it))
             recyclerViewAdapter.notifyDataSetChanged()
         })
+
         val saveButton = findViewById<Button>(R.id.saveBtn)
         val project  = findViewById<EditText>(R.id.etProject)
 
@@ -76,6 +123,7 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                     val user = UserEntity(0, project.text.toString(), false)
                     viewModel.insertUserInfo(user)
                 } else {
+                    //ボタンが”変更”のとき
                     val user = UserEntity(
                         project.getTag(project.id).toString().toInt(),
                         project.text.toString(),
@@ -87,9 +135,7 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                 project.setText("")
             }
         }
-
-
-    }
+   }
 
 
 
