@@ -1,8 +1,12 @@
 package com.example.a1dayproject
 
+import android.animation.AnimatorInflater
+import android.animation.AnimatorSet
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.MenuItem
@@ -30,10 +34,12 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
     lateinit var user1:UserEntity
     var moveJudge:Boolean = false
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_mode)
+
+        val saveButton = findViewById<Button>(R.id.saveBtn)
+        saveButton.background = resources.getDrawable(R.drawable.background_selector, null)
 
         //optionBar 戻る
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -92,17 +98,15 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                     y: Int) {
                     moveJudge = true
                     val tvName = findViewById<TextView>(R.id.tvName)
-//                    user1 = UserEntity(
-//                        //移動した箇所をデータベースで更新する。
-//                        fromPos,
-//                        tvName.text.toString(),
-//                        false
-//                    )
+
                     if (moveJudge == true){
                         val project  = findViewById<EditText>(R.id.etProject)
-                        val saveButton = findViewById<Button>(R.id.saveBtn)
+
+
                         project.setText("並び順を保存しますか")
                         saveButton.text = "保存"
+                        saveButton.background = resources.getDrawable(R.drawable.background_selector, null)
+                        blink(saveButton)
                         moveJudge = false
                     }
                 }
@@ -122,7 +126,7 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
             recyclerViewAdapter.notifyDataSetChanged()
         })
 
-        val saveButton = findViewById<Button>(R.id.saveBtn)
+
         val project  = findViewById<EditText>(R.id.etProject)
 
 
@@ -137,13 +141,11 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
             }
         })
 
-
-
-
         //保存ボタン押下時
         saveButton.setOnClickListener {
 
             val project  = findViewById<EditText>(R.id.etProject)
+            val a = saveButton.background
             //プロジェクト欄が空欄の時トースト
             if(project.text.toString() == ""){
                    val toast = Toast.makeText(this,"空欄では登録できません。",Toast.LENGTH_LONG)
@@ -175,6 +177,7 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
     override fun onDeleteUserClickListener(user: UserEntity) {
         val project  = findViewById<EditText>(R.id.etProject)
         val saveButton = findViewById<Button>(R.id.saveBtn)
+        saveButton.background = resources.getDrawable(R.drawable.btn_del,null)
         saveButton.text = "保存"
         project.setText("")
 
@@ -184,10 +187,10 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
     override fun onItemClickListener(user: UserEntity) {
         val project  = findViewById<EditText>(R.id.etProject)
         val saveButton = findViewById<Button>(R.id.saveBtn)
+        saveButton.background = resources.getDrawable(R.drawable.btn_itemclick,null)
         project.setText(user.name)
         project.setTag(project.id, user.id)
         saveButton.text = "変更"
-        saveButton.setBackgroundColor(Color.rgb(205,92,92))
     }
 
     //optionBar 押下処理
@@ -203,5 +206,28 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
             returnVal = super.onOptionsItemSelected(item)
         }
         return returnVal
+    }
+    private fun blink(view: View) {
+        val handler = Handler()
+        val saveButton = findViewById<Button>(R.id.saveBtn)
+
+
+
+        Thread(Runnable {
+            val timeToBlink = 500
+            try {
+                Thread.sleep(timeToBlink.toLong())
+            } catch (e: Exception) {
+            }
+
+            handler.post {
+                if (view.alpha == 1f) {
+                    view.alpha = 0.5f
+                } else {
+                    view.alpha = 1f
+                }
+                blink(view)
+            }
+        }).start()
     }
 }
