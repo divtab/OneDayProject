@@ -1,6 +1,7 @@
 package com.example.a1dayproject
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -19,10 +20,15 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
 import com.example.a1dayproject.db.UserEntity
 import java.util.*
 import kotlin.collections.ArrayList
+import android.util.Log
+import android.view.View
+import android.widget.TextView
 
 class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
     lateinit var recyclerViewAdapter: RecyclerViewAdapter
     lateinit var viewModel: MainActivityViewModel
+    lateinit var user1:UserEntity
+    var moveJudge:Boolean = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,13 +40,13 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
         //optionBar タイトル
         supportActionBar?.title = "EditMode..."
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewAdapter)
-        val dataSet: ArrayList<String> = arrayListOf()
-        var i = 0
-        while (i < 20) {
-            val str: String = java.lang.String.format(Locale.US, "Data_0%d", i)
-            dataSet.add(str)
-            i++
-        }
+//        val dataSet: ArrayList<String> = arrayListOf()
+//        var i = 0
+//        while (i < 20) {
+//            val str: String = java.lang.String.format(Locale.US, "Data_0%d", i)
+//            dataSet.add(str)
+//            i++
+//        }
 
         recyclerView.apply {
             layoutManager = LinearLayoutManager(this@EditMode)
@@ -63,7 +69,7 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
         val mIth = ItemTouchHelper(
             object : ItemTouchHelper.SimpleCallback(
                 ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-                ItemTouchHelper.LEFT
+                ItemTouchHelper.END
             ) {
                 override fun onMove(
                     recyclerView: RecyclerView,
@@ -73,15 +79,36 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                     val fromPos = viewHolder.adapterPosition
                     val toPos = target.adapterPosition
                     adapter.notifyItemMoved(fromPos, toPos)
+                    println("aaa")
                     return true // true if moved, false otherwise
                 }
-
-
-
+                override fun onMoved(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    fromPos: Int,
+                    target: RecyclerView.ViewHolder,
+                    toPos: Int,
+                    x: Int,
+                    y: Int) {
+                    moveJudge = true
+                    val tvName = findViewById<TextView>(R.id.tvName)
+//                    user1 = UserEntity(
+//                        //移動した箇所をデータベースで更新する。
+//                        fromPos,
+//                        tvName.text.toString(),
+//                        false
+//                    )
+                    if (moveJudge == true){
+                        val project  = findViewById<EditText>(R.id.etProject)
+                        val saveButton = findViewById<Button>(R.id.saveBtn)
+                        project.setText("並び順を保存しますか")
+                        saveButton.text = "保存"
+                        moveJudge = false
+                    }
+                }
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder,direction: Int) {
-//                    dataSet.removeAt(viewHolder.adapterPosition)
+//                    .removeAt(viewHolder.adapterPosition)
 //                    adapter.notifyItemRemoved(viewHolder.adapterPosition)
-
                 }
             })
 
@@ -111,15 +138,20 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
         })
 
 
+
+
         //保存ボタン押下時
         saveButton.setOnClickListener {
 
             val project  = findViewById<EditText>(R.id.etProject)
+            //プロジェクト欄が空欄の時トースト
             if(project.text.toString() == ""){
                    val toast = Toast.makeText(this,"空欄では登録できません。",Toast.LENGTH_LONG)
                    toast.show()
             }else {
-                if (saveButton.text.equals("保存")) {
+                //保存ボタンが押せる状況で、
+                if (saveButton.text.equals("保存"))
+                {
                     val user = UserEntity(0, project.text.toString(), false)
                     viewModel.insertUserInfo(user)
                 } else {
@@ -130,6 +162,7 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                         false
                     )
                     viewModel.updateUserInfo(user)
+                    //ボタン変更押下後、青色に変更。
                     saveButton.text = "保存"
                 }
                 project.setText("")
@@ -154,6 +187,7 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
         project.setText(user.name)
         project.setTag(project.id, user.id)
         saveButton.text = "変更"
+        saveButton.setBackgroundColor(Color.rgb(205,92,92))
     }
 
     //optionBar 押下処理

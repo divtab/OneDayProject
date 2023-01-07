@@ -41,7 +41,6 @@ class RecyclerViewAdapter(private val listener: EditMode): RecyclerView.Adapter<
             listener.onItemClickListener(items[position])
         }
         holder.bind(items[position])
-
     }
 
     override fun getItemCount(): Int {
