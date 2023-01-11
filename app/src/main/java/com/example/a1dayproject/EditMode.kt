@@ -27,16 +27,22 @@ import kotlin.collections.ArrayList
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import kotlin.concurrent.thread
 
-class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
+class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
     lateinit var recyclerViewAdapter: RecyclerViewAdapter
     lateinit var viewModel: MainActivityViewModel
     lateinit var user1:UserEntity
     var moveJudge:Boolean = false
+    var btnMode:String = "save"
+    var items = ArrayList<UserEntity>()
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_mode)
+
 
         val saveButton = findViewById<Button>(R.id.saveBtn)
         saveButton.background = resources.getDrawable(R.drawable.background_selector, null)
@@ -53,6 +59,7 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
 //            dataSet.add(str)
 //            i++
 //        }
+
 
         recyclerView.apply {
             layoutManager = LinearLayoutManager(this@EditMode)
@@ -101,13 +108,30 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
 
                     if (moveJudge == true){
                         val project  = findViewById<EditText>(R.id.etProject)
-
-
-                        project.setText("並び順を保存しますか")
+                        project.setText("**並び順を保存しますか?**")
                         saveButton.text = "保存"
                         saveButton.background = resources.getDrawable(R.drawable.background_selector, null)
                         blink(saveButton)
                         moveJudge = false
+
+
+                        val a = recyclerViewAdapter.items[1]
+                        val b = viewHolder
+                        val c = recyclerView
+                        val d = fromPos
+                        val e = toPos
+
+                        println("testMode : "+a)
+                        println(b)
+                        println(c)
+                        println(d)
+                        println(e)
+                        recyclerViewAdapter.items[1] = UserEntity(1,"test",false)
+                        println("test2 : "+a)
+
+
+                        btnMode = "sort"
+
                     }
                 }
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder,direction: Int) {
@@ -125,6 +149,7 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
             recyclerViewAdapter.setListData(ArrayList(it))
             recyclerViewAdapter.notifyDataSetChanged()
         })
+
 
 
         val project  = findViewById<EditText>(R.id.etProject)
@@ -151,23 +176,34 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                    val toast = Toast.makeText(this,"空欄では登録できません。",Toast.LENGTH_LONG)
                    toast.show()
             }else {
-                //保存ボタンが押せる状況で、
-                if (saveButton.text.equals("保存"))
-                {
-                    val user = UserEntity(0, project.text.toString(), false)
-                    viewModel.insertUserInfo(user)
-                } else {
-                    //ボタンが”変更”のとき
-                    val user = UserEntity(
-                        project.getTag(project.id).toString().toInt(),
-                        project.text.toString(),
-                        false
-                    )
-                    viewModel.updateUserInfo(user)
-                    //ボタン変更押下後、青色に変更。
-                    saveButton.text = "保存"
+                //保存 or 変更
+                if (btnMode == "save") {
+                    //保存ボタンが押せる状況で、
+                    if (saveButton.text.equals("保存")) {
+                        val user = UserEntity(0, project.text.toString(), false)
+                        viewModel.insertUserInfo(user)
+                    } else {
+                        //ボタンが”変更”のとき
+                        val user = UserEntity(
+                            project.getTag(project.id).toString().toInt(),
+                            project.text.toString(),
+                            false
+                        )
+                        viewModel.updateUserInfo(user)
+                        //ボタン変更押下後、青色に変更。
+                        saveButton.background = resources.getDrawable(R.drawable.background_selector, null)
+                        saveButton.text = "保存"
+                    }
+                    project.setText("")
+
+                //並び順を保存
+                }else if (btnMode == "sort") {
+                    println("sortしました。")
+                    viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+                    viewModel.getAllUsersObservers().observe(this, Observer {
+                        recyclerViewAdapter.notifyDataSetChanged()
+                    })
                 }
-                project.setText("")
             }
         }
    }
@@ -209,9 +245,6 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
     }
     private fun blink(view: View) {
         val handler = Handler()
-        val saveButton = findViewById<Button>(R.id.saveBtn)
-
-
 
         Thread(Runnable {
             val timeToBlink = 500
@@ -229,5 +262,9 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                 blink(view)
             }
         }).start()
+
+
     }
 }
+
+
