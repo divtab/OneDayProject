@@ -1,19 +1,17 @@
 package com.example.a1dayproject
 
-import android.animation.AnimatorInflater
-import android.animation.AnimatorSet
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -22,12 +20,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
 import com.example.a1dayproject.db.UserEntity
-import java.util.*
-import kotlin.collections.ArrayList
-import android.util.Log
-import android.view.View
-import android.widget.TextView
-import kotlin.concurrent.thread
 
 class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
     lateinit var recyclerViewAdapter: RecyclerViewAdapter
@@ -114,21 +106,26 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                         blink(saveButton)
                         moveJudge = false
 
+                        var test = recyclerViewAdapter.items
 
-                        val a = recyclerViewAdapter.items[1]
-                        val b = viewHolder
-                        val c = recyclerView
-                        val d = fromPos
-                        val e = toPos
+                        //　⇑⇑　上のアイテムを下にムーブした際
+                        if (fromPos < toPos){
 
-                        println("testMode : "+a)
-                        println(b)
-                        println(c)
-                        println(d)
-                        println(e)
-                        recyclerViewAdapter.items[1] = UserEntity(1,"test",false)
-                        println("test2 : "+a)
+                            var a = recyclerViewAdapter.items[fromPos]
+                            recyclerViewAdapter.items[fromPos] = recyclerViewAdapter.items[toPos]
+                            recyclerViewAdapter.items[toPos] = a
 
+                            var test = recyclerViewAdapter.items
+                            println("リスト移動直後　↑↑ : "+ test)
+                        //　⇓⇓　下のアイテムを上にムーブした際
+                        }else{
+                            var a = recyclerViewAdapter.items[toPos]
+                            recyclerViewAdapter.items[toPos] = recyclerViewAdapter.items[fromPos]
+                            recyclerViewAdapter.items[fromPos] = a
+
+                            var test = recyclerViewAdapter.items
+                            println("リスト移動直後 ⇓⇓　: "+ test)
+                        }
 
                         btnMode = "sort"
 
@@ -198,16 +195,35 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
 
                 //並び順を保存
                 }else if (btnMode == "sort") {
+                    //ボタンが”変更”のとき
+                    val cnt = recyclerViewAdapter.items.size
+
+                    var user = UserEntity(
+                        0,"takuma",true
+                    )
+
+//                    for (i in 0..cnt-1){
+//                        var user = UserEntity(
+//                            recyclerViewAdapter.items[i].id,
+//                            recyclerViewAdapter.items[i].name,
+//                            recyclerViewAdapter.items[i].check)
+//                        println(user)
+//                        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+//                        viewModel.updateUserInfo(user)
+//                    }
+                    viewModel.updateUserInfo(user)
                     println("sortしました。")
-                    viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
-                    viewModel.getAllUsersObservers().observe(this, Observer {
-                        recyclerViewAdapter.notifyDataSetChanged()
-                    })
+                    restart()
                 }
             }
         }
    }
 
+    private fun restart() {
+//        val intent = Intent(this, EditMode::class.java)
+//        finishAndRemoveTask()
+//        startActivity(intent)
+    }
 
 
     override fun onDeleteUserClickListener(user: UserEntity) {

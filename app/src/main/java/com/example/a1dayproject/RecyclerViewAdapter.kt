@@ -53,5 +53,6 @@ class RecyclerViewAdapter(private val listener: EditMode): RecyclerView.Adapter<
     interface RowClickListener{
         fun onDeleteUserClickListener(user: UserEntity)
         fun onItemClickListener(user: UserEntity)
+
     }
 }
