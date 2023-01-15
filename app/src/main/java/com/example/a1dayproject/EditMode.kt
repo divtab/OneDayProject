@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
+import com.example.a1dayproject.db.RoomAppDb
 import com.example.a1dayproject.db.UserEntity
 
 class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
@@ -28,13 +29,14 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
     var moveJudge:Boolean = false
     var btnMode:String = "save"
     var items = ArrayList<UserEntity>()
+    val database = RoomAppDb.getAppDatabase(this)
+    val userDao = database?.userDao()
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_mode)
-
 
         val saveButton = findViewById<Button>(R.id.saveBtn)
         saveButton.background = resources.getDrawable(R.drawable.background_selector, null)
@@ -51,7 +53,6 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
 //            dataSet.add(str)
 //            i++
 //        }
-
 
         recyclerView.apply {
             layoutManager = LinearLayoutManager(this@EditMode)
@@ -85,6 +86,8 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                     val toPos = target.adapterPosition
                     adapter.notifyItemMoved(fromPos, toPos)
                     println("aaa")
+                    println(fromPos)
+                    println(toPos)
                     return true // true if moved, false otherwise
                 }
                 override fun onMoved(
@@ -97,6 +100,10 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                     y: Int) {
                     moveJudge = true
                     val tvName = findViewById<TextView>(R.id.tvName)
+
+                    val a = userDao?.getAllUserInfo()?.get(1)?.id
+                    println("userDao"+a)
+
 
                     if (moveJudge == true){
                         val project  = findViewById<EditText>(R.id.etProject)
@@ -115,8 +122,12 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                             recyclerViewAdapter.items[fromPos] = recyclerViewAdapter.items[toPos]
                             recyclerViewAdapter.items[toPos] = a
 
+                            var test2 = recyclerViewAdapter.items[0]
+                            var test3 = recyclerViewAdapter.items[1]
                             var test = recyclerViewAdapter.items
                             println("リスト移動直後　↑↑ : "+ test)
+                            println(test2)
+                            println(test3)
                         //　⇓⇓　下のアイテムを上にムーブした際
                         }else{
                             var a = recyclerViewAdapter.items[toPos]
@@ -172,6 +183,7 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
             if(project.text.toString() == ""){
                    val toast = Toast.makeText(this,"空欄では登録できません。",Toast.LENGTH_LONG)
                    toast.show()
+
             }else {
                 //保存 or 変更
                 if (btnMode == "save") {
@@ -198,20 +210,38 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                     //ボタンが”変更”のとき
                     val cnt = recyclerViewAdapter.items.size
 
-                    var user = UserEntity(
-                        0,"takuma",true
-                    )
 
-//                    for (i in 0..cnt-1){
-//                        var user = UserEntity(
-//                            recyclerViewAdapter.items[i].id,
-//                            recyclerViewAdapter.items[i].name,
-//                            recyclerViewAdapter.items[i].check)
-//                        println(user)
-//                        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
-//                        viewModel.updateUserInfo(user)
-//                    }
-                    viewModel.updateUserInfo(user)
+                    //　×　item[0]にid=11,takuma,trueを保存する
+                    //　〇　UserEntityのidが一致するitemsにname,checkを保存する。
+                    // recyclerViewAdapter.items["0"]なぜ0でいいのかがわからない。iじゃないのか？　
+//                    recyclerViewAdapter.items[0] = UserEntity(2,"tamafadsafds",true)
+//                    var user = recyclerViewAdapter.items[0]
+//                    println(recyclerViewAdapter.items)
+//                    viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+//                    viewModel.updateUserInfo(user)
+
+
+                    for (i in 0..cnt-1) {
+                        val a = userDao?.getAllUserInfo()?.get(i)?.id
+                        val b:Int = a!!
+                        println("uuu")
+                        println(b)
+
+                        println(recyclerViewAdapter.items[i].name)
+                        recyclerViewAdapter.items[i] = UserEntity(
+                            b,
+                            recyclerViewAdapter.items[i].name,
+                            recyclerViewAdapter.items[i].check
+                        )
+                        println(recyclerViewAdapter.items[i])
+                        var user = recyclerViewAdapter.items[i]
+                        println("user"+user)
+                        println(recyclerViewAdapter.items)
+                        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+                        viewModel.updateUserInfo(user)
+                    }
+
+
                     println("sortしました。")
                     restart()
                 }
@@ -220,9 +250,9 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
    }
 
     private fun restart() {
-//        val intent = Intent(this, EditMode::class.java)
-//        finishAndRemoveTask()
-//        startActivity(intent)
+        val intent = Intent(this, EditMode::class.java)
+        finishAndRemoveTask()
+        startActivity(intent)
     }
 
 

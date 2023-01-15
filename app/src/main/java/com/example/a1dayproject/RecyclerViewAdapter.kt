@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.a1dayproject.db.UserEntity
+import kotlin.properties.Delegates
 
 class RecyclerViewAdapter(private val listener: EditMode): RecyclerView.Adapter<RecyclerViewAdapter.ViewHolderItem>() {
     var items = ArrayList<UserEntity>()
@@ -26,7 +27,6 @@ class RecyclerViewAdapter(private val listener: EditMode): RecyclerView.Adapter<
         }
     }
 
-
     fun setListData(data: ArrayList<UserEntity>) {
         this.items = data
     }
@@ -36,13 +36,14 @@ class RecyclerViewAdapter(private val listener: EditMode): RecyclerView.Adapter<
         return ViewHolderItem(itemXml, listener)
     }
 
-    override fun onBindViewHolder(holder: RecyclerViewAdapter.ViewHolderItem, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerViewAdapter.ViewHolderItem, position: Int){
         holder.itemView.setOnClickListener {
             listener.onItemClickListener(items[position])
         }
         holder.bind(items[position])
-        println("リスト表示$items")
     }
+
+
 
     override fun getItemCount(): Int {
         return items.size
@@ -56,3 +57,4 @@ class RecyclerViewAdapter(private val listener: EditMode): RecyclerView.Adapter<
 
     }
 }
+
