@@ -1,5 +1,6 @@
 package com.example.a1dayproject
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -9,10 +10,8 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -22,18 +21,18 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
 import com.example.a1dayproject.db.RoomAppDb
 import com.example.a1dayproject.db.UserEntity
 
-class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
+class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
     lateinit var recyclerViewAdapter: RecyclerViewAdapter
-    lateinit var viewModel: MainActivityViewModel
-    lateinit var user1:UserEntity
+    private lateinit var viewModel: MainActivityViewModel
     var moveJudge:Boolean = false
     var btnMode:String = "save"
-    var items = ArrayList<UserEntity>()
-    val database = RoomAppDb.getAppDatabase(this)
-    val userDao = database?.userDao()
+    //データベースの取得
+    private val dataBase = RoomAppDb.getAppDatabase(this)
+    //UserDaoの取得
+    private val userDao = dataBase?.userDao()
 
 
-
+    @SuppressLint("UseCompatLoadingForDrawables", "NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_mode)
@@ -46,13 +45,7 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
         //optionBar タイトル
         supportActionBar?.title = "EditMode..."
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewAdapter)
-//        val dataSet: ArrayList<String> = arrayListOf()
-//        var i = 0
-//        while (i < 20) {
-//            val str: String = java.lang.String.format(Locale.US, "Data_0%d", i)
-//            dataSet.add(str)
-//            i++
-//        }
+
 
         recyclerView.apply {
             layoutManager = LinearLayoutManager(this@EditMode)
@@ -61,7 +54,6 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
             //アイテムの区切り線
             val divider = DividerItemDecoration(applicationContext, VERTICAL)
             addItemDecoration(divider)
-            //
             setHasFixedSize(true)
         }
 
@@ -70,7 +62,7 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
         recyclerView.addItemDecoration(itemDecoration)
 
 
-        var adapter = recyclerView.adapter as RecyclerViewAdapter
+        val adapter = recyclerView.adapter as RecyclerViewAdapter
 
         val mIth = ItemTouchHelper(
             object : ItemTouchHelper.SimpleCallback(
@@ -85,9 +77,6 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                     val fromPos = viewHolder.adapterPosition
                     val toPos = target.adapterPosition
                     adapter.notifyItemMoved(fromPos, toPos)
-                    println("aaa")
-                    println(fromPos)
-                    println(toPos)
                     return true // true if moved, false otherwise
                 }
                 override fun onMoved(
@@ -99,13 +88,8 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                     x: Int,
                     y: Int) {
                     moveJudge = true
-                    val tvName = findViewById<TextView>(R.id.tvName)
 
-                    val a = userDao?.getAllUserInfo()?.get(1)?.id
-                    println("userDao"+a)
-
-
-                    if (moveJudge == true){
+                    if (moveJudge){
                         val project  = findViewById<EditText>(R.id.etProject)
                         project.setText("**並び順を保存しますか?**")
                         saveButton.text = "保存"
@@ -113,29 +97,17 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                         blink(saveButton)
                         moveJudge = false
 
-                        var test = recyclerViewAdapter.items
-
                         //　⇑⇑　上のアイテムを下にムーブした際
                         if (fromPos < toPos){
 
-                            var a = recyclerViewAdapter.items[fromPos]
+                            val a = recyclerViewAdapter.items[fromPos]
                             recyclerViewAdapter.items[fromPos] = recyclerViewAdapter.items[toPos]
                             recyclerViewAdapter.items[toPos] = a
-
-                            var test2 = recyclerViewAdapter.items[0]
-                            var test3 = recyclerViewAdapter.items[1]
-                            var test = recyclerViewAdapter.items
-                            println("リスト移動直後　↑↑ : "+ test)
-                            println(test2)
-                            println(test3)
                         //　⇓⇓　下のアイテムを上にムーブした際
                         }else{
-                            var a = recyclerViewAdapter.items[toPos]
+                            val a = recyclerViewAdapter.items[toPos]
                             recyclerViewAdapter.items[toPos] = recyclerViewAdapter.items[fromPos]
                             recyclerViewAdapter.items[fromPos] = a
-
-                            var test = recyclerViewAdapter.items
-                            println("リスト移動直後 ⇓⇓　: "+ test)
                         }
 
                         btnMode = "sort"
@@ -150,18 +122,13 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
 
         mIth.attachToRecyclerView(recyclerView)
 
-
-
-        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
-        viewModel.getAllUsersObservers().observe(this, Observer {
+        viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
+        viewModel.getAllUsersObservers().observe(this) {
             recyclerViewAdapter.setListData(ArrayList(it))
             recyclerViewAdapter.notifyDataSetChanged()
-        })
-
-
+        }
 
         val project  = findViewById<EditText>(R.id.etProject)
-
 
 //      テキストエディット空欄時、保存変更ボタンを使用不可にする。
         project.addTextChangedListener(object:TextWatcher{
@@ -176,14 +143,11 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
 
         //保存ボタン押下時
         saveButton.setOnClickListener {
-
             val project  = findViewById<EditText>(R.id.etProject)
-            val a = saveButton.background
             //プロジェクト欄が空欄の時トースト
             if(project.text.toString() == ""){
                    val toast = Toast.makeText(this,"空欄では登録できません。",Toast.LENGTH_LONG)
                    toast.show()
-
             }else {
                 //保存 or 変更
                 if (btnMode == "save") {
@@ -210,22 +174,11 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                     //ボタンが”変更”のとき
                     val cnt = recyclerViewAdapter.items.size
 
-
                     //　×　item[0]にid=11,takuma,trueを保存する
                     //　〇　UserEntityのidが一致するitemsにname,checkを保存する。
-                    // recyclerViewAdapter.items["0"]なぜ0でいいのかがわからない。iじゃないのか？　
-//                    recyclerViewAdapter.items[0] = UserEntity(2,"tamafadsafds",true)
-//                    var user = recyclerViewAdapter.items[0]
-//                    println(recyclerViewAdapter.items)
-//                    viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
-//                    viewModel.updateUserInfo(user)
-
-
-                    for (i in 0..cnt-1) {
+                    for (i in 0 until cnt) {
                         val a = userDao?.getAllUserInfo()?.get(i)?.id
                         val b:Int = a!!
-                        println("uuu")
-                        println(b)
 
                         println(recyclerViewAdapter.items[i].name)
                         recyclerViewAdapter.items[i] = UserEntity(
@@ -234,13 +187,10 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                             recyclerViewAdapter.items[i].check
                         )
                         println(recyclerViewAdapter.items[i])
-                        var user = recyclerViewAdapter.items[i]
-                        println("user"+user)
-                        println(recyclerViewAdapter.items)
-                        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+                        val user = recyclerViewAdapter.items[i]
+                        viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
                         viewModel.updateUserInfo(user)
                     }
-
 
                     println("sortしました。")
                     restart()
@@ -256,6 +206,7 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
     }
 
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     override fun onDeleteUserClickListener(user: UserEntity) {
         val project  = findViewById<EditText>(R.id.etProject)
         val saveButton = findViewById<Button>(R.id.saveBtn)
@@ -266,6 +217,7 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
         viewModel.deleteUserInfo(user)
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     override fun onItemClickListener(user: UserEntity) {
         val project  = findViewById<EditText>(R.id.etProject)
         val saveButton = findViewById<Button>(R.id.saveBtn)
@@ -292,7 +244,7 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
     private fun blink(view: View) {
         val handler = Handler()
 
-        Thread(Runnable {
+        Thread {
             val timeToBlink = 500
             try {
                 Thread.sleep(timeToBlink.toLong())
@@ -307,7 +259,7 @@ class EditMode() : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                 }
                 blink(view)
             }
-        }).start()
+        }.start()
 
 
     }
