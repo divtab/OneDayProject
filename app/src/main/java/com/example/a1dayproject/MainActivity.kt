@@ -1,5 +1,6 @@
 package com.example.a1dayproject
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
@@ -8,7 +9,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,9 +18,10 @@ import com.example.a1dayproject.db.UserEntity
 
 
 class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListener {
-    lateinit var mainRVA:MainRecyclerViewAdapter
-    lateinit var viewModel:MainActivityViewModel
+    private lateinit var mainRVA:MainRecyclerViewAdapter
+    private lateinit var viewModel:MainActivityViewModel
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -34,14 +35,12 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
             addItemDecoration(divider)
         }
         viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
-        viewModel.getAllUsersObservers().observe(this, Observer {
+        viewModel.getAllUsersObservers().observe(this) {
             mainRVA.setListData(ArrayList(it))
             mainRVA.notifyDataSetChanged()
-        })
+        }
 
     }
-
-
 
     //メニューを初めて表示するときに一度だけ呼び出される。
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -52,7 +51,7 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         //戻り値用の変数を初期値trueで用意。
         var returnVal = true
-        var intent: Intent
+        val intent: Intent
         //item.itemIdは、選択されたオプションメニューのid
         when(item.itemId){
             R.id.action_editMode -> {
