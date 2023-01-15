@@ -7,10 +7,9 @@ import com.example.a1dayproject.db.RoomAppDb
 import com.example.a1dayproject.db.UserEntity
 
 class MainActivityViewModel(app:Application):AndroidViewModel(app) {
-    lateinit var allUsers : MutableLiveData<List<UserEntity>>
+    private var allUsers : MutableLiveData<List<UserEntity>> = MutableLiveData()
 
     init{
-        allUsers = MutableLiveData()
         getAllUsers()
     }
 
@@ -18,7 +17,7 @@ class MainActivityViewModel(app:Application):AndroidViewModel(app) {
         return allUsers
     }
 
-    fun getAllUsers() {
+    private fun getAllUsers() {
         val userDao = RoomAppDb.getAppDatabase((getApplication()))?.userDao()
         val list = userDao?.getAllUserInfo()
 
