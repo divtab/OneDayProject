@@ -5,19 +5,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.a1dayproject.db.UserEntity
-import kotlin.properties.Delegates
 
 class RecyclerViewAdapter(private val listener: EditMode): RecyclerView.Adapter<RecyclerViewAdapter.ViewHolderItem>() {
     var items = ArrayList<UserEntity>()
 
     //ViewHolder
-    inner class ViewHolderItem(view: View, val listener: EditMode): RecyclerView.ViewHolder(view) {
+    inner class ViewHolderItem(view: View, private val listener: EditMode): RecyclerView.ViewHolder(view) {
 
-        val tvName = view.findViewById<TextView>(R.id.tvName)
-        val deleteUserID = view.findViewById<ImageView>(R.id.deleteUserID)
+        private val tvName = view.findViewById<TextView>(R.id.tvName)
+        private val deleteUserID = view.findViewById<ImageView>(R.id.deleteUserID)
 
         fun bind(data: UserEntity) {
             tvName.text = data.name
