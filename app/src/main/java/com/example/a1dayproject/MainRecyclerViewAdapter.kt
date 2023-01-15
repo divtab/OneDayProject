@@ -6,13 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.a1dayproject.db.UserEntity
 
-class MainRecyclerViewAdapter (val listener:MainActivity): RecyclerView.Adapter<MainRecyclerViewAdapter.MainViewHolderItem>(){
-    var items = ArrayList<UserEntity>()
+class MainRecyclerViewAdapter (private val listener:MainActivity): RecyclerView.Adapter<MainRecyclerViewAdapter.MainViewHolderItem>(){
+    private var items = ArrayList<UserEntity>()
 
     fun setListData(data: ArrayList<UserEntity>) {
         this.items = data
@@ -34,10 +33,10 @@ class MainRecyclerViewAdapter (val listener:MainActivity): RecyclerView.Adapter<
     }
 
     //ViewHolder
-    inner class MainViewHolderItem(view: View, val listener: MainActivity): RecyclerView.ViewHolder(view) {
+    inner class MainViewHolderItem(view: View, private val listener: MainActivity): RecyclerView.ViewHolder(view) {
 
-        val checkBox = view.findViewById<CheckBox>(R.id.checkBox)
-        val mainTv = view.findViewById<TextView>(R.id.miantv)
+        private val checkBox = view.findViewById<CheckBox>(R.id.checkBox)
+        private val mainTv = view.findViewById<TextView>(R.id.miantv)
 
         fun bind(data: UserEntity) {
             mainTv.text = data.name
