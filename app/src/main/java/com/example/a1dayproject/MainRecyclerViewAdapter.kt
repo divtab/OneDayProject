@@ -16,7 +16,6 @@ class MainRecyclerViewAdapter (private val listener:MainActivity): RecyclerView.
     fun setListData(data: ArrayList<UserEntity>) {
         this.items = data
     }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainRecyclerViewAdapter.MainViewHolderItem {
         val itemXml = LayoutInflater.from(parent.context).inflate(R.layout.main_one_layout,parent,false)
         return MainViewHolderItem(itemXml, listener)
