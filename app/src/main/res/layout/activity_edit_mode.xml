@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EditMode">
+    tools:context=".EditMode"
+    android:background="@drawable/activitybackground">
 
     <EditText
         android:id="@+id/etProject"
@@ -44,4 +45,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/saveBtn"
         app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/returnButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:text="元に戻す"
+        android:background="@drawable/btn_return"
+        app:backgroundTint="@null"
+        android:enabled="false"
+        app:layout_constraintStart_toEndOf="@+id/saveBtn"
+        app:layout_constraintTop_toBottomOf="@+id/etProject" />
 </androidx.constraintlayout.widget.ConstraintLayout>

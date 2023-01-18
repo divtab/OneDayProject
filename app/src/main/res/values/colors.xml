@@ -11,7 +11,7 @@
     //ボタン背景色の色
     <color name="myWhite">#DCDCDC</color>
     <color name="myBtnBlue">#FF6200EE</color>
-    <color name="myBtnBlueFla">#FF6200EE</color>
     <color name="myBtnRed">#CD5C5C</color>
+    <color name="myBtnReturn">#5f9ea0</color>
 
 </resources>

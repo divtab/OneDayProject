@@ -9,11 +9,14 @@
         <entry key="..\:/Users/takuh/StudioProjects/1DayProject3/app/src/main/res/drawable/btn_del.xml" value="0.1535" />
         <entry key="..\:/Users/takuh/StudioProjects/1DayProject3/app/src/main/res/drawable/btn_itemclick.xml" value="0.1535" />
         <entry key="..\:/Users/takuh/StudioProjects/1DayProject3/app/src/main/res/drawable/btn_itemmove.xml" value="0.1535" />
+        <entry key="..\:/Users/takuh/StudioProjects/1DayProject3/app/src/main/res/drawable/btn_return.xml" value="0.2115" />
+        <entry key="..\:/Users/takuh/StudioProjects/1DayProject3/app/src/main/res/drawable/recycler.xml" value="0.196" />
+        <entry key="..\:/Users/takuh/StudioProjects/1DayProject3/app/src/main/res/drawable/recycleritem.xml" value="0.1" />
         <entry key="..\:/Users/takuh/StudioProjects/1DayProject3/app/src/main/res/layout/activity_edit.xml" value="0.14266304347826086" />
-        <entry key="..\:/Users/takuh/StudioProjects/1DayProject3/app/src/main/res/layout/activity_edit_mode.xml" value="0.1" />
+        <entry key="..\:/Users/takuh/StudioProjects/1DayProject3/app/src/main/res/layout/activity_edit_mode.xml" value="0.45" />
         <entry key="..\:/Users/takuh/StudioProjects/1DayProject3/app/src/main/res/layout/activity_main.xml" value="0.18645833333333334" />
         <entry key="..\:/Users/takuh/StudioProjects/1DayProject3/app/src/main/res/layout/main_one_layout.xml" value="0.45" />
-        <entry key="..\:/Users/takuh/StudioProjects/1DayProject3/app/src/main/res/layout/one_layout.xml" value="0.21159420289855072" />
+        <entry key="..\:/Users/takuh/StudioProjects/1DayProject3/app/src/main/res/layout/one_layout.xml" value="0.375" />
         <entry key="..\:/Users/takuh/StudioProjects/1DayProject3/app/src/main/res/menu/activity_main.xml" value="0.44611528822055135" />
         <entry key="..\:/Users/takuh/StudioProjects/1DayProject3/app/src/main/res/menu/option_menu.xml" value="0.18541666666666667" />
       </map>

@@ -7,14 +7,15 @@ import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
+import android.view.ViewGroup
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_DRAG
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
@@ -37,8 +38,12 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_mode)
 
+
+
         val saveButton = findViewById<Button>(R.id.saveBtn)
         saveButton.background = resources.getDrawable(R.drawable.background_selector, null)
+        val returnButton = findViewById<Button>(R.id.returnButton)
+
 
         //optionBar 戻る
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -51,22 +56,22 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
             layoutManager = LinearLayoutManager(this@EditMode)
             recyclerViewAdapter = RecyclerViewAdapter(this@EditMode)
             adapter = recyclerViewAdapter
-            //アイテムの区切り線
-            val divider = DividerItemDecoration(applicationContext, VERTICAL)
-            addItemDecoration(divider)
-            setHasFixedSize(true)
+//            //アイテムの区切り線
+//            val divider = DividerItemDecoration(applicationContext, VERTICAL)
+//            addItemDecoration(divider
+//            setHasFixedSize(true)
         }
 
-        val itemDecoration: RecyclerView.ItemDecoration =
-            DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
-        recyclerView.addItemDecoration(itemDecoration)
+//        val itemDecoration: RecyclerView.ItemDecoration =
+//            DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+//        recyclerView.addItemDecoration(itemDecoration)
 
 
         val adapter = recyclerView.adapter as RecyclerViewAdapter
 
         val mIth = ItemTouchHelper(
             object : ItemTouchHelper.SimpleCallback(
-                ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+                ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.START or ItemTouchHelper.END,
                 ItemTouchHelper.END
             ) {
                 override fun onMove(
@@ -90,11 +95,14 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                     moveJudge = true
 
                     if (moveJudge){
+                        val returnButton = findViewById<Button>(R.id.returnButton)
+                        returnButton.isEnabled = true
                         val project  = findViewById<EditText>(R.id.etProject)
                         project.setText("**並び順を保存しますか?**")
                         saveButton.text = "保存"
                         saveButton.background = resources.getDrawable(R.drawable.background_selector, null)
-                        blink(saveButton)
+                        returnButton.background = resources.getDrawable(R.drawable.btn_return,null)
+
                         moveJudge = false
 
                         //　⇑⇑　上のアイテムを下にムーブした際
@@ -118,9 +126,28 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
 //                    .removeAt(viewHolder.adapterPosition)
 //                    adapter.notifyItemRemoved(viewHolder.adapterPosition)
                 }
+                // 1. 行が選択された時に、このコールバックが呼ばれる。ここで行をハイライトする。
+                override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+                    super.onSelectedChanged(viewHolder, actionState)
+
+                    if (actionState == ACTION_STATE_DRAG) {
+                        viewHolder?.itemView?.alpha = 0.5f
+                    }
+                }
+
+                // 2. 行が選択解除された時 (ドロップされた時) このコールバックが呼ばれる。ハイライトを解除する。
+                override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+                    super.clearView(recyclerView, viewHolder)
+
+                    viewHolder?.itemView?.alpha = 1.0f
+                }
             })
 
         mIth.attachToRecyclerView(recyclerView)
+
+        fun startDragging(viewHolder: RecyclerView.ViewHolder) {
+            mIth.startDrag(viewHolder)
+        }
 
         viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
         viewModel.getAllUsersObservers().observe(this) {
@@ -171,6 +198,7 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
 
                 //並び順を保存
                 }else if (btnMode == "sort") {
+
                     //ボタンが”変更”のとき
                     val cnt = recyclerViewAdapter.items.size
 
@@ -180,41 +208,66 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                         val a = userDao?.getAllUserInfo()?.get(i)?.id
                         val b:Int = a!!
 
-                        println(recyclerViewAdapter.items[i].name)
                         recyclerViewAdapter.items[i] = UserEntity(
                             b,
                             recyclerViewAdapter.items[i].name,
                             recyclerViewAdapter.items[i].check
                         )
-                        println(recyclerViewAdapter.items[i])
                         val user = recyclerViewAdapter.items[i]
                         viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
                         viewModel.updateUserInfo(user)
                     }
+                    val toast = Toast.makeText(this,"並び順を保存しました。",Toast.LENGTH_LONG)
+                    toast.show()
 
-                    println("sortしました。")
-                    restart()
+                    val returnBtn = findViewById<Button>(R.id.returnButton)
+                    returnBtn.isEnabled = false
+//                    val project = findViewById<TextView>(R.id.etProject)
+                    project.setText("")
+                    btnMode = "save"
+
                 }
             }
         }
+        returnButton.setOnClickListener {
+
+            val cnt = recyclerViewAdapter.items.size
+
+            //　×　item[0]にid=11,takuma,trueを保存する
+            //　〇　UserEntityのidが一致するitemsにname,checkを保存する。
+            for (i in 0 until cnt) {
+                val a = userDao?.getAllUserInfo()?.get(i)?.id
+
+                recyclerViewAdapter.items[i] = UserEntity(
+                    recyclerViewAdapter.items[i].id,
+                    recyclerViewAdapter.items[i].name,
+                    recyclerViewAdapter.items[i].check
+                )
+                val user = recyclerViewAdapter.items[i]
+                viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
+                viewModel.updateUserInfo(user)
+            }
+            val toast = Toast.makeText(this,"並び順を元に戻しました。",Toast.LENGTH_LONG)
+            toast.show()
+
+            btnMode = "save"
+            returnButton.isEnabled = false
+            project.setText("")
+
+        }
    }
-
-    private fun restart() {
-        val intent = Intent(this, EditMode::class.java)
-        finishAndRemoveTask()
-        startActivity(intent)
-    }
-
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onDeleteUserClickListener(user: UserEntity) {
         val project  = findViewById<EditText>(R.id.etProject)
         val saveButton = findViewById<Button>(R.id.saveBtn)
+        val returnButton = findViewById<Button>(R.id.returnButton)
         saveButton.background = resources.getDrawable(R.drawable.btn_del,null)
         saveButton.text = "保存"
         project.setText("")
-
+        returnButton.isEnabled = false
         viewModel.deleteUserInfo(user)
+
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -241,28 +294,9 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
         }
         return returnVal
     }
-    private fun blink(view: View) {
-        val handler = Handler()
-
-        Thread {
-            val timeToBlink = 500
-            try {
-                Thread.sleep(timeToBlink.toLong())
-            } catch (e: Exception) {
-            }
-
-            handler.post {
-                if (view.alpha == 1f) {
-                    view.alpha = 0.5f
-                } else {
-                    view.alpha = 1f
-                }
-                blink(view)
-            }
-        }.start()
 
 
-    }
+
 }
 
 

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- ボタン非活性時  -->
+    <item android:state_enabled="false">
+        <shape>
+            　           <!--ボタンの背景色を設定-->
+            <solid android:color="@color/myWhite" />
+            <corners android:radius="15px"/>
+        </shape>
+    </item>
+
+    <!-- ボタン押下時 -->
+    <!--    <item android:state_pressed="true" android:drawable="@color/myBtnRed" />-->
+
+
+    <!-- ボタン通常時 -->
+    <item>
+        <shape>
+            <solid android:color="@color/myBtnReturn" />
+            <!--ボタンの背景色を設定-->
+            <corners android:radius="15px"/>
+        </shape>
+    </item>
+</selector>
