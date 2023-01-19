@@ -1,17 +1,18 @@
 package com.example.a1dayproject
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
-import android.view.MenuItem
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -98,6 +99,9 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                         val returnButton = findViewById<Button>(R.id.returnButton)
                         returnButton.isEnabled = true
                         val project  = findViewById<EditText>(R.id.etProject)
+                        handleKeyEvent(project)
+                        project.inputType = InputType.TYPE_NULL
+
                         project.setText("**並び順を保存しますか?**")
                         saveButton.text = "保存"
                         saveButton.background = resources.getDrawable(R.drawable.background_selector, null)
@@ -202,6 +206,7 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                     //ボタンが”変更”のとき
                     val cnt = recyclerViewAdapter.items.size
 
+
                     //　×　item[0]にid=11,takuma,trueを保存する
                     //　〇　UserEntityのidが一致するitemsにname,checkを保存する。
                     for (i in 0 until cnt) {
@@ -220,15 +225,20 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                     val toast = Toast.makeText(this,"並び順を保存しました。",Toast.LENGTH_LONG)
                     toast.show()
 
+
+
                     val returnBtn = findViewById<Button>(R.id.returnButton)
                     returnBtn.isEnabled = false
-//                    val project = findViewById<TextView>(R.id.etProject)
+
                     project.setText("")
+                    project.inputType = InputType.TYPE_CLASS_TEXT
+
                     btnMode = "save"
 
                 }
             }
         }
+
         returnButton.setOnClickListener {
 
             val cnt = recyclerViewAdapter.items.size
@@ -253,6 +263,7 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
             btnMode = "save"
             returnButton.isEnabled = false
             project.setText("")
+            project.inputType = InputType.TYPE_CLASS_TEXT
 
         }
    }
@@ -296,6 +307,14 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
     }
 
 
+    private fun handleKeyEvent(view: View): Boolean {
+
+            val inputMethodManager =
+                getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+            return true
+
+    }
 
 }
 
