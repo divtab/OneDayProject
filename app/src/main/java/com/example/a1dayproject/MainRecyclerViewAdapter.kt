@@ -47,6 +47,9 @@ class MainRecyclerViewAdapter (private val listener:MainActivity): RecyclerView.
 
             //チェックボックス押下時に状態をRoomに登録
             checkBox.setOnClickListener {
+
+
+
                 //チェックボックスを押下した結果trueの時
                 if (checkBox.isChecked){
                     listener.onCheckBoxClickTrue(data)

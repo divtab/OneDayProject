@@ -270,25 +270,30 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onDeleteUserClickListener(user: UserEntity) {
-        val project  = findViewById<EditText>(R.id.etProject)
-        val saveButton = findViewById<Button>(R.id.saveBtn)
-        val returnButton = findViewById<Button>(R.id.returnButton)
-        saveButton.background = resources.getDrawable(R.drawable.btn_del,null)
-        saveButton.text = "保存"
-        project.setText("")
-        returnButton.isEnabled = false
-        viewModel.deleteUserInfo(user)
+        if(btnMode == "save") {
+            println(btnMode)
+            val project = findViewById<EditText>(R.id.etProject)
+            val saveButton = findViewById<Button>(R.id.saveBtn)
+            val returnButton = findViewById<Button>(R.id.returnButton)
+            saveButton.background = resources.getDrawable(R.drawable.btn_del, null)
+            saveButton.text = "保存"
+            project.setText("")
+            returnButton.isEnabled = false
+            viewModel.deleteUserInfo(user)
+        }
 
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onItemClickListener(user: UserEntity) {
-        val project  = findViewById<EditText>(R.id.etProject)
-        val saveButton = findViewById<Button>(R.id.saveBtn)
-        saveButton.background = resources.getDrawable(R.drawable.btn_itemclick,null)
-        project.setText(user.name)
-        project.setTag(project.id, user.id)
-        saveButton.text = "変更"
+        if(btnMode == "save") {
+            val project = findViewById<EditText>(R.id.etProject)
+            val saveButton = findViewById<Button>(R.id.saveBtn)
+            saveButton.background = resources.getDrawable(R.drawable.btn_itemclick, null)
+            project.setText(user.name)
+            project.setTag(project.id, user.id)
+            saveButton.text = "変更"
+        }
     }
 
     //optionBar 押下処理

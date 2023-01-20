@@ -35,9 +35,12 @@ class RecyclerViewAdapter(private val listener: EditMode): RecyclerView.Adapter<
     }
 
     override fun onBindViewHolder(holder: RecyclerViewAdapter.ViewHolderItem, position: Int){
+
+
         holder.itemView.setOnClickListener {
             listener.onItemClickListener(items[position])
         }
+
         holder.bind(items[position])
     }
 
