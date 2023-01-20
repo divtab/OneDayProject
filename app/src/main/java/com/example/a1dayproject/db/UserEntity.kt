@@ -8,6 +8,5 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "userinfo")
 data class UserEntity(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Int = 0,
-    @ColumnInfo(name = "project") val name: String,
-    @ColumnInfo(name = "check") var check: Boolean
+    @ColumnInfo(name = "project") val name: String
 )
