@@ -16,17 +16,10 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
-import com.example.a1dayproject.db.RoomAppDb
-import com.example.a1dayproject.db.UserDao
 import com.example.a1dayproject.db.UserEntity
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import java.nio.file.Files.size
 import java.security.SecureRandom
-import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.concurrent.schedule
 
 
 class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListener {
@@ -42,7 +35,6 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         val imageView = findViewById<TextView>(R.id.background)
         imageView.setBackgroundResource(R.drawable.defalt_background)
 
@@ -53,12 +45,23 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
             adapter = mainRVA
             val divider = DividerItemDecoration(applicationContext,VERTICAL)
             addItemDecoration(divider)
-            println("aaaa"+size)
         }
+
         viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
         viewModel.getAllUsersObservers().observe(this) {
             mainRVA.setListData(ArrayList(it))
             mainRVA.notifyDataSetChanged()
+
+            var checkCnt = 0
+            val cnt = mainRVA.items.size
+            val parentsText = findViewById<TextView>(R.id.background)
+            for (i in 0 until cnt) {
+                if (mainRVA.items[i].check == true){
+                    checkCnt += 1
+                }
+            }
+            var parent = checkCnt * 100 / cnt
+            parentsText.text = "$parent%"
         }
 
 

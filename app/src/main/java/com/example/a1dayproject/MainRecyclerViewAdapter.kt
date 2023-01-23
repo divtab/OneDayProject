@@ -39,12 +39,11 @@ class MainRecyclerViewAdapter (private val listener:MainActivity): RecyclerView.
         private val checkBox = view.findViewById<CheckBox>(R.id.checkBox)
         private val mainTv = view.findViewById<TextView>(R.id.miantv)
 
+
+
         fun bind(data: UserEntity) {
             mainTv.text = data.name
             checkBox.isChecked = data.check
-
-
-
 
             //チェックボックス押下により取り消し線を引く
             invoke(mainTv,checkBox.isChecked)
