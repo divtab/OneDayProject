@@ -11,13 +11,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.a1dayproject.db.UserEntity
 
 class MainRecyclerViewAdapter (private val listener:MainActivity): RecyclerView.Adapter<MainRecyclerViewAdapter.MainViewHolderItem>(){
-    private var items = ArrayList<UserEntity>()
+    var items = ArrayList<UserEntity>()
 
     fun setListData(data: ArrayList<UserEntity>) {
         this.items = data
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainRecyclerViewAdapter.MainViewHolderItem {
         val itemXml = LayoutInflater.from(parent.context).inflate(R.layout.main_one_layout,parent,false)
+
         return MainViewHolderItem(itemXml, listener)
     }
     override fun onBindViewHolder(holder: MainViewHolderItem, position: Int) {
@@ -37,6 +38,8 @@ class MainRecyclerViewAdapter (private val listener:MainActivity): RecyclerView.
         private val checkBox = view.findViewById<CheckBox>(R.id.checkBox)
         private val mainTv = view.findViewById<TextView>(R.id.miantv)
 
+
+
         fun bind(data: UserEntity) {
             mainTv.text = data.name
             checkBox.isChecked = data.check
@@ -47,17 +50,18 @@ class MainRecyclerViewAdapter (private val listener:MainActivity): RecyclerView.
             //チェックボックス押下時に状態をRoomに登録
             checkBox.setOnClickListener {
 
-
-
                 //チェックボックスを押下した結果trueの時
                 if (checkBox.isChecked){
                     listener.onCheckBoxClickTrue(data)
+                    listener.parentsCheck()
                 }
                 //チェックボックスを押下した結果falseの時
                 else{
                     listener.onCheckBoxClickfalse(data)
+                    listener.parentsCheck()
 
                 }
+
 
             }
 

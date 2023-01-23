@@ -224,9 +224,6 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
                     }
                     val toast = Toast.makeText(this,"並び順を保存しました。",Toast.LENGTH_LONG)
                     toast.show()
-
-
-
                     val returnBtn = findViewById<Button>(R.id.returnButton)
                     returnBtn.isEnabled = false
 

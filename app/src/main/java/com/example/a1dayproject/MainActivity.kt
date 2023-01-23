@@ -6,21 +6,29 @@ import android.graphics.Color
 import android.graphics.Paint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.size
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
 import com.example.a1dayproject.db.UserEntity
+import java.nio.file.Files.size
+import java.security.SecureRandom
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListener {
     private lateinit var mainRVA:MainRecyclerViewAdapter
-    private lateinit var viewModel:MainActivityViewModel
+    lateinit var viewModel:MainActivityViewModel
+
+    internal var mHandler = Handler()
+    internal var mCounter: Int = 0
+
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,14 +46,64 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
             val divider = DividerItemDecoration(applicationContext,VERTICAL)
             addItemDecoration(divider)
         }
+
         viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
         viewModel.getAllUsersObservers().observe(this) {
             mainRVA.setListData(ArrayList(it))
             mainRVA.notifyDataSetChanged()
+
+            var checkCnt = 0
+            val cnt = mainRVA.items.size
+            val parentsText = findViewById<TextView>(R.id.background)
+            for (i in 0 until cnt) {
+                if (mainRVA.items[i].check == true){
+                    checkCnt += 1
+                }
+            }
+            var parent = checkCnt * 100 / cnt
+            parentsText.text = "$parent%"
         }
 
-    }
 
+    }
+    fun parentsCheck() {
+        var checkCnt = 0
+        val cnt = mainRVA.items.size
+        val parentsText = findViewById<TextView>(R.id.background)
+        for (i in 0 until cnt) {
+            if (mainRVA.items[i].check == true){
+                checkCnt += 1
+            }
+        }
+
+        val thread = Thread(Runnable {
+            try {
+                mCounter = 0
+                while (mCounter < 70) {
+                    // Threadによる処理の中ではUIを操作することができないので、
+                    // Handlerを用いてUIスレッドに行わせる処理を記述する
+                    mHandler.post {
+                        val secureRandom = SecureRandom().nextInt(100)
+                        // この部分はUIスレッドで動作する
+                        parentsText.text = secureRandom.toString()
+                    }
+                    // ここで時間稼ぎ
+                    Thread.sleep(20)
+                    mCounter++
+                }
+                if(mCounter == 70) {
+                    var parent = checkCnt * 100 / cnt
+                    parentsText.text = "$parent%"
+                }
+
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+            }
+        })
+        thread.start()
+
+
+    }
     //メニューを初めて表示するときに一度だけ呼び出される。
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.option_menu, menu)
@@ -83,6 +141,7 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
             }
         }
     }
+
 
 
 
