@@ -60,13 +60,8 @@ class MainRecyclerViewAdapter (private val listener:MainActivity): RecyclerView.
                 else{
                     listener.onCheckBoxClickfalse(data)
                     listener.parentsCheck()
-
                 }
-
-
             }
-
-
         }
     }
 
