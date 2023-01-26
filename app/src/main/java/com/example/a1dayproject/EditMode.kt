@@ -293,6 +293,8 @@ class EditMode : AppCompatActivity(),RecyclerViewAdapter.RowClickListener{
         }
     }
 
+
+
     //optionBar 押下処理
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         var returnVal = true
