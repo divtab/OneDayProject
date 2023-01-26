@@ -26,8 +26,6 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
     private lateinit var mainRVA:MainRecyclerViewAdapter
     lateinit var viewModel:MainActivityViewModel
 
-
-
     internal var mHandler = Handler()
     internal var mCounter: Int = 0
 
@@ -67,21 +65,19 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
         }
 
 
-
     }
-    fun parentsCheck(){
+    fun parentsCheck() {
         var checkCnt = 0
         val cnt = mainRVA.items.size
-
-        var parentsText = findViewById<TextView>(R.id.background)
+        val parentsText = findViewById<TextView>(R.id.background)
         for (i in 0 until cnt) {
             if (mainRVA.items[i].check == true){
                 checkCnt += 1
             }
         }
 
-//        var parent = checkCnt + 100 / cnt
-//        val maxColor = 150
+        var parent = checkCnt * 100 / cnt
+        val maxColor = 150
 
         val thread = Thread(Runnable {
             try {
@@ -103,7 +99,18 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
 //                    var blue = maxColor - (maxColor * parent / 100)
 //                    parentsText.setBackgroundColor(Color.rgb(red, 0 ,blue))
                     ////////////
+
+
+                    var red = maxColor - (maxColor * parent / 100)
+                    var blue =maxColor - (maxColor * parent / 100)
+
+                    parentsText.setBackgroundColor(Color.rgb(red,0,blue))
+                    if (mCounter == 3) {
+                        println("red" + red)
+                        println("blue" + blue)
+                    }
                 }
+
                 if(mCounter == 70) {
                     var parent = checkCnt * 100 / cnt
                     parentsText.text = "$parent%"
@@ -118,6 +125,8 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
             }
         })
         thread.start()
+
+
     }
     //メニューを初めて表示するときに一度だけ呼び出される。
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -126,7 +135,7 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
     }
     //オプションメニューの項目が選択されたときに呼ばれる。
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        //戻り値用の変数を初eで用意。
+        //戻り値用の変数を初期値trueで用意。
         var returnVal = true
         val intent: Intent
         //item.itemIdは、選択されたオプションメニューのid
