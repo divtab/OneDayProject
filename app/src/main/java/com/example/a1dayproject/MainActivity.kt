@@ -10,6 +10,7 @@ import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
+import androidx.core.os.HandlerCompat
 import androidx.core.view.size
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -19,16 +20,17 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
 import com.example.a1dayproject.db.UserEntity
 import java.nio.file.Files.size
 import java.security.SecureRandom
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
+import java.util.concurrent.Executors.newCachedThreadPool
+import java.util.concurrent.Executors.newSingleThreadExecutor
 import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListener {
     private lateinit var mainRVA:MainRecyclerViewAdapter
     lateinit var viewModel:MainActivityViewModel
-
-    internal var mHandler = Handler()
-    internal var mCounter: Int = 0
-
+    var a = 0
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,68 +66,62 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
             parentsText.text = "$parent%"
         }
 
-
     }
+    //チェックボタンが押下で走る
     fun parentsCheck() {
+        val handler = HandlerCompat.createAsync(mainLooper)
+        val background = findViewById<TextView>(R.id.background)
+        val backgroundReceiver = CheckInfoBackgroundReceiver(handler, background)
+        val executeService = Executors.newSingleThreadExecutor()
+        executeService.submit(backgroundReceiver)
+    }
+    private inner class CheckInfoBackgroundReceiver(handler: Handler,view: TextView):Runnable{
+        private val _handler = handler
+        private val _viewText = view
+        private val maxColor = 150
         var checkCnt = 0
-        val cnt = mainRVA.items.size
-        val parentsText = findViewById<TextView>(R.id.background)
-        for (i in 0 until cnt) {
-            if (mainRVA.items[i].check == true){
-                checkCnt += 1
-            }
-        }
+        private var cnt = mainRVA.items.size
+        //チェックされている割合を取得
+        var parent = 0
+        var mCounter = 0
 
-        var parent = checkCnt * 100 / cnt
-        val maxColor = 150
-
-        val thread = Thread(Runnable {
+        override fun run() {
             try {
-                mCounter = 0
-                while (mCounter < 70) {
+                for (i in 0 until cnt){
+                    if (mainRVA.items[i].check) {
+                        checkCnt += 1
+                    }
+                }
+                while (mCounter < 50){
                     // Threadによる処理の中ではUIを操作することができないので、
                     // Handlerを用いてUIスレッドに行わせる処理を記述する
-                    mHandler.post {
+                    parent = checkCnt * 100 / cnt
+                    var red = (maxColor * parent / 100)
+                    var blue =maxColor - (maxColor * parent / 100)
+
+                    _handler.post {
                         val secureRandom = SecureRandom().nextInt(100)
                         // この部分はUIスレッドで動作する
-                        parentsText.text = secureRandom.toString()
+                        _viewText.text = secureRandom.toString()
+                        _viewText.setBackgroundColor(Color.rgb(red,75,blue))
                     }
                     // ここで時間稼ぎ
                     Thread.sleep(20)
                     mCounter++
-                    ////////////
-                    //背景色指定//
-//                    var red =  maxColor - (maxColor * parent / 100)
-//                    var blue = maxColor - (maxColor * parent / 100)
-//                    parentsText.setBackgroundColor(Color.rgb(red, 0 ,blue))
-                    ////////////
-
-
-                    var red = maxColor - (maxColor * parent / 100)
-                    var blue =maxColor - (maxColor * parent / 100)
-
-                    parentsText.setBackgroundColor(Color.rgb(red,0,blue))
-                    if (mCounter == 3) {
-                        println("red" + red)
-                        println("blue" + blue)
-                    }
+                    a++
+                    println("$a : $mCounter")
                 }
-
-                if(mCounter == 70) {
-                    var parent = checkCnt * 100 / cnt
-                    parentsText.text = "$parent%"
-                    ////////////
-                    //背景色指定//
-                    ////////////
-                    parentsText.setBackgroundColor(Color.rgb(parent, parent,parent))
+                if (mCounter == 50) {
+                    _viewText.text ="$parent%"
+                    println("50になったよ")
                 }
-
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
+            } catch (e: Exception) {
             }
-        })
-        thread.start()
+        }
 
+    }
+
+    fun runWorker(){
 
     }
     //メニューを初めて表示するときに一度だけ呼び出される。

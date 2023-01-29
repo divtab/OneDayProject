@@ -40,7 +40,6 @@ class MainRecyclerViewAdapter (private val listener:MainActivity): RecyclerView.
         private val mainTv = view.findViewById<TextView>(R.id.miantv)
 
 
-
         fun bind(data: UserEntity) {
             mainTv.text = data.name
             checkBox.isChecked = data.check
