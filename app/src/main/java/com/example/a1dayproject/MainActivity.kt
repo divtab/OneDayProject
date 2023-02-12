@@ -107,13 +107,6 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
                     }
                     // ここで時間稼ぎ
                     Thread.sleep(20)
-                    mCounter++
-                    a++
-                    println("$a : $mCounter")
-                }
-                if (mCounter == 50) {
-                    _viewText.text ="$parent%"
-                    println("50になったよ")
                 }
             } catch (e: Exception) {
             }
@@ -121,9 +114,6 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
 
     }
 
-    fun runWorker(){
-
-    }
     //メニューを初めて表示するときに一度だけ呼び出される。
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.option_menu, menu)
@@ -161,9 +151,6 @@ class MainActivity : AppCompatActivity(),MainRecyclerViewAdapter.RowClickListene
             }
         }
     }
-
-
-
 
     override fun onCheckBoxClickTrue(user:UserEntity){
         user.check = true
